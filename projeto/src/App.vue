@@ -1,40 +1,81 @@
-<script setup>
-import HelloWorld from "./components/HelloWorld.vue";
-import TheWelcome from "./components/TheWelcome.vue";
-import MeuComponente from "./components/MeuComponente.vue";
-</script>
-
 <template>
-  <header>
-    <MeuComponente />
-  </header>
+  <div>
+    <h2>Cadastro de Jogadores</h2>
+
+    <form @submit.prevent="adicionarJogador">
+      <label for="nome">Nome:</label>
+      <input
+        v-model="nome"
+        id="nome"
+        type="text"
+        placeholder="Nome do jogador"
+      />
+
+      <label for="idade">Idade:</label>
+      <input v-model="idade" id="idade" type="number" placeholder="Idade" />
+
+      <label for="corCamisa">Cor da Camisa:</label>
+      <input
+        v-model="corCamisa"
+        id="corCamisa"
+        type="text"
+        placeholder="Cor da camisa"
+      />
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <div v-if="jogadores.length === 0">
+      <p>Nenhum jogador cadastrado. Adicione um novo jogador.</p>
+    </div>
+    <ul v-else>
+      <li v-for="(jogador, index) in jogadores" :key="index">
+        {{ jogador.nome }} ({{ jogador.idade }} anos) - Camisa:
+        {{ jogador.corCamisa }}
+        <button @click="removerJogador(index)">Remover</button>
+      </li>
+    </ul>
+  </div>
 </template>
 
+<script setup>
+import { ref } from "vue";
+
+const nome = ref("");
+const idade = ref("");
+const corCamisa = ref("");
+const jogadores = ref([]);
+
+function adicionarJogador() {
+  if (nome.value && idade.value && corCamisa.value) {
+    jogadores.value.push({
+      nome: nome.value,
+      idade: idade.value,
+      corCamisa: corCamisa.value,
+    });
+    nome.value = "";
+    idade.value = "";
+    corCamisa.value = "";
+  } else {
+    alert("Preencha todos os campos.");
+  }
+}
+
+function removerJogador(index) {
+  jogadores.value.splice(index, 1);
+}
+</script>
+
 <style scoped>
-header {
-  line-height: 1.5;
+form {
+  margin-bottom: 20px;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+input {
+  margin: 5px;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+button {
+  margin: 5px;
 }
 </style>
